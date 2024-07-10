@@ -10,9 +10,13 @@ import UIKit
 class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     
     private var collectionView: UICollectionView!
+    private var data: [(image: UIImage, text: String)] = []
+    private var currentPage = 0
+    private var isLoading = false
+    private var itemsPerPage = 20
     
     // Dati di esempio
-        private let data: [(image: UIImage, text: String)] = [
+        private let allData: [(image: UIImage, text: String)] = [
             (image: UIImage(named: "charizard")!, text: "Charizard"),
             (image: UIImage(named: "charizard")!, text: "Item 2"),
             (image: UIImage(named: "charizard")!, text: "Item 3"),
@@ -64,7 +68,49 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         
         view.addSubview(collectionView)
         
+        //
+        loadMoreData()
+        
     }
+    
+    //MARK: - Data Loading
+    /*
+     Il metodo loadMoreData() è progettato per caricare ulteriori dati quando l’utente scorre verso il basso nella UICollectionView. Questo metodo implementa una forma di paginazione che carica un set di elementi alla volta
+     */
+    
+    private func loadMoreData() {
+        /*
+         Questo controllo garantisce che il metodo non venga eseguito se un caricamento è già in corso. Se isLoading è true, il metodo restituisce immediatamente e non fa nulla.
+         */
+            guard !isLoading else { return }
+        
+        //Imposta isLoading su true per indicare che un’operazione di caricamento è in corso.
+            isLoading = true
+            
+        //Utilizza una coda globale per eseguire un blocco di codice dopo un ritardo di 1 secondo
+            DispatchQueue.global().asyncAfter(deadline: .now() + 1) { [weak self] in //evita perdite di memoria
+                guard let self = self else { return }
+                //Calcola l’indice iniziale dei dati da caricare per la pagina corrente.
+                let startIndex = self.currentPage * self.itemsPerPage
+                
+                //Calcola l’indice finale dei dati da caricare, assicurandosi che non superi il numero totale di elementi disponibili in allData.
+                let endIndex = min(startIndex + self.itemsPerPage, self.allData.count)
+                
+                //Controlla se ci sono nuovi dati
+                if startIndex < endIndex {
+                    let newData = Array(self.allData[startIndex..<endIndex])
+                    self.data.append(contentsOf: newData)
+                    //Incrementa il numero della pagina corrente, preparandosi per il successivo caricamento.
+                    self.currentPage += 1
+                }
+                
+                //Aggiornamento della collectionView
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
+                    self.isLoading = false
+                }
+            }
+        }
     
     //MARK: - UICollectionView Data Source
     
@@ -87,5 +133,18 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             let width = collectionView.frame.width / 2
             return CGSize(width: width, height: width)
         }
+    
+    //MARK: - UIScrollViewDelegate
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.size.height
+        
+        if offsetY > contentHeight - height - 100 {
+            loadMoreData()
+        }
+    }
     
 }
