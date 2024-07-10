@@ -73,6 +73,8 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         
     }
     
+    
+    
     //MARK: - Data Loading
     /*
      Il metodo loadMoreData() è progettato per caricare ulteriori dati quando l’utente scorre verso il basso nella UICollectionView. Questo metodo implementa una forma di paginazione che carica un set di elementi alla volta
@@ -133,6 +135,20 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             let width = collectionView.frame.width / 2
             return CGSize(width: width, height: width)
         }
+    
+    //MARK: - CollectionViewDelegate
+    
+    //Metodo che gestisce il tap sulla singola cella e che permette la navigazione nella DetailView
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedItem = data[indexPath.item]
+        
+        print("Hai selezionato: \(selectedItem.text)")
+        let detailViewController = DetailViewController()
+        //passiamo l'elemento selezionato alla prossima view
+        detailViewController.item = selectedItem
+        navigationController?.pushViewController(detailViewController, animated: true)
+        
+    }
     
     //MARK: - UIScrollViewDelegate
     
