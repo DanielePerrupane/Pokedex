@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E70F6BFA2C3F1FCC000F51D9 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70F6BF92C3F1FCC000F51D9 /* DetailViewController.swift */; };
+		E70F6C022C4173E4000F51D9 /* PokemonManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70F6C012C4173E4000F51D9 /* PokemonManager.swift */; };
 		E70FF7752C3E997700E01C57 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70FF7742C3E997700E01C57 /* AppDelegate.swift */; };
 		E70FF7772C3E997700E01C57 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70FF7762C3E997700E01C57 /* SceneDelegate.swift */; };
 		E70FF77E2C3E997900E01C57 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E70FF77D2C3E997900E01C57 /* Assets.xcassets */; };
@@ -19,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		E70F6BF92C3F1FCC000F51D9 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		E70F6C012C4173E4000F51D9 /* PokemonManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonManager.swift; sourceTree = "<group>"; };
 		E70FF7712C3E997700E01C57 /* pokedex4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pokedex4.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E70FF7742C3E997700E01C57 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E70FF7762C3E997700E01C57 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -63,6 +65,7 @@
 				E70FF7742C3E997700E01C57 /* AppDelegate.swift */,
 				E70FF7762C3E997700E01C57 /* SceneDelegate.swift */,
 				E70FF7942C3EF06300E01C57 /* ViewController.swift */,
+				E70F6C012C4173E4000F51D9 /* PokemonManager.swift */,
 				E70F6BF92C3F1FCC000F51D9 /* DetailViewController.swift */,
 				E70FF7962C3EF31500E01C57 /* CustomViewCell.swift */,
 				E70FF77D2C3E997900E01C57 /* Assets.xcassets */,
@@ -153,6 +156,7 @@
 				E70F6BFA2C3F1FCC000F51D9 /* DetailViewController.swift in Sources */,
 				E70FF7952C3EF06300E01C57 /* ViewController.swift in Sources */,
 				E70FF7772C3E997700E01C57 /* SceneDelegate.swift in Sources */,
+				E70F6C022C4173E4000F51D9 /* PokemonManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

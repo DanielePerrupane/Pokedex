@@ -9,7 +9,8 @@ import UIKit
 
 class CustomViewCell: UICollectionViewCell {
     
-    private let imageView: UIImageView = {
+    
+     let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
@@ -17,7 +18,7 @@ class CustomViewCell: UICollectionViewCell {
         
     }()
     
-    private let label: UILabel = {
+     let label: UILabel = {
        
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
