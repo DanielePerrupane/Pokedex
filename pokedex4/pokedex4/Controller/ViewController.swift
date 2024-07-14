@@ -6,18 +6,21 @@
 //
 
 import UIKit
-import PokemonAPI
 
-class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
-    
+class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIScrollViewDelegate {
+
     private var collectionView: UICollectionView!
     private var dataArray: [(image: UIImage, text: String)] = []
     var pokemonDetails: [PokemonDetail] = []
     
     private var pendingRequests = 0
     
-    //max 1302 fare test con 20 specie
-    private var apiURL = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=151"
+    private var offset = 0
+    private let limit = 20
+    private var isLoading = false
+    
+    private let maxPokemon = 300 // Limite massimo di Pokemon da caricare
+    private var apiURL = "https://pokeapi.co/api/v2/pokemon"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,42 +35,47 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         
-        //Configurazione UICollectionView
+        // Configurazione UICollectionView
         collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
         collectionView.dataSource = self
-        collectionView.delegate = self
+        collectionView.delegate = self  // Imposta la ViewController come delegate
         
-        //Registrazione della cella
+        // Registrazione della cella
         collectionView.register(CustomViewCell.self, forCellWithReuseIdentifier: "cell")
         
         view.addSubview(collectionView)
         
-        //Effettua la chiamata API
+        // Effettua la chiamata API per caricare i primi 20 Pokémon
         fetchUrlPokemon()
-        
     }
     
-    //MARK: - Pokemon Data Methods
+    // MARK: - Pokemon Data Methods
     
     func fetchUrlPokemon() {
+        guard !isLoading else { return } // Evita richieste multiple contemporaneamente
+        guard offset < maxPokemon else { return } // Evita di superare il limite massimo
+        isLoading = true
         
-        guard let url = URL(string: apiURL) else {
+        let urlString = "\(apiURL)?offset=\(offset)&limit=\(limit)"
+        
+        guard let url = URL(string: urlString) else {
             print("Errore: URL non valido")
+            isLoading = false
             return
         }
         
-        
         let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            
-            
+            guard let self = self else { return }
             
             if let error = error {
                 print("Errore nella richiesta: \(error)")
+                self.isLoading = false
                 return
             }
             
-            guard let self = self, let data = data else {
+            guard let data = data else {
                 print("Errore: Nessun dato ricevuto")
+                self.isLoading = false
                 return
             }
             
@@ -78,14 +86,13 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
                 DispatchQueue.main.async {
                     self.fetchPokemonDetails(results: results)
                 }
-                
             } catch {
                 print("Errore durante il parsing dei dati: \(error)")
+                self.isLoading = false
             }
-        }.resume()
+        }
+        task.resume()
     }
-    
-    //PRE CAMBIAMENTI
     
     func fetchPokemonDetails(results: [PokemonAPIResult]) {
         let sortedResults = results.sorted { (result1, result2) -> Bool in
@@ -117,12 +124,6 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
                 do {
                     let pokemonDetail = try JSONDecoder().decode(PokemonDetail.self, from: data)
                     
-                    // Verifica che il dettaglio scaricato corrisponda al Pokemon atteso
-                    guard let currentResult = sortedResults.first(where: { $0.url == result.url }) else {
-                        print("Pokemon non trovato tra i risultati ordinati per l'URL \(result.url)")
-                        return
-                    }
-                    
                     // Aggiungi il dettaglio del Pokemon all'array
                     DispatchQueue.main.async {
                         self.pokemonDetails.append(pokemonDetail)
@@ -142,48 +143,13 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
                 }
             }.resume()
         }
+        
+        // Incrementa l'offset e imposta isLoading su false
+        self.offset += self.limit
+        self.isLoading = false
     }
     
-    func fetchPokemonSpeciesDetail(for speciesURL: String, completion: @escaping (String) -> Void) {
-        guard let url = URL(string: speciesURL) else {
-            print("Errore: URL non valido per i dettagli della specie")
-            completion("N/A")
-            return
-        }
-        
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print("Errore nella richiesta: \(error)")
-                completion("N/A")
-                return
-            }
-            
-            guard let data = data else {
-                print("Errore: Nessun dato ricevuto")
-                completion("N/A")
-                return
-            }
-            do {
-                let speciesDetail = try JSONDecoder().decode(PokemonSpeciesDetail.self, from: data)
-                
-                // Filtriamo il flavor text per lingua "en"
-                if let flavorTextEntry = speciesDetail.flavorTextEntries.first(where: { $0.language.name == "en" }) {
-                    completion(flavorTextEntry.flavorText)
-                } else {
-                    print("Flavor text in lingua 'en' non trovato")
-                    completion("N/A")
-                }
-                
-            } catch {
-                print("Errore durante il parsing dei dettagli della specie: \(error)")
-                completion("N/A")
-            }
-        }
-        
-        task.resume()
-    }
-    
-    //MARK: - UICollectionView Data Source
+    // MARK: - UICollectionView Data Source
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return pokemonDetails.count
@@ -201,39 +167,44 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         return cell
     }
     
-    //MARK: - UICollectionViewDelegateFlowLayout
+    // MARK: - UICollectionViewDelegateFlowLayout
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width / 2
         return CGSize(width: width, height: width)
     }
     
-    //MARK: - CollectionViewDelegate
+    // MARK: - CollectionViewDelegate
     
-    //Metodo che gestisce il tap sulla singola cella e che permette la navigazione nella DetailView
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let pokemonDetail = pokemonDetails[indexPath.item]
-        let imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemonDetail.id).png"
+        let imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemonDetails[indexPath.item].id).png"
         
         let detailViewController = DetailViewController()
         detailViewController.configure(with: pokemonDetail)
         detailViewController.configureImage(with: imageUrl)
-        // Stampiamo l'ID del Pokémon
-            print("Pokemon ID at index \(indexPath.item): \(pokemonDetail.id)")
-            
         navigationController?.pushViewController(detailViewController, animated: true)
     }
     
+    // MARK: - UIScrollViewDelegate
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let contentHeight = scrollView.contentSize.height
+        let scrollViewHeight = scrollView.bounds.height
+        let scrollOffsetThreshold = contentHeight - scrollViewHeight
+        
+        if scrollView.contentOffset.y > scrollOffsetThreshold && scrollView.isDragging {
+            fetchUrlPokemon()
+        }
+    }
 }
 
 extension PokemonAPIResult {
     var idFromUrl: Int? {
-        // Esempio di estrazione dell'ID dall'URL
         guard let url = URL(string: self.url) else {
             return nil
         }
         
-        // Dividi l'URL per '/' e prendi l'ultimo componente
         let components = url.pathComponents
         if let lastComponent = components.last, let id = Int(lastComponent) {
             return id
