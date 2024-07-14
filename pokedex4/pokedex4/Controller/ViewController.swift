@@ -17,7 +17,7 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
     private var pendingRequests = 0
     
     //max 1302 fare test con 20 specie
-    private var apiURL = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=300"
+    private var apiURL = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=50"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,7 +56,6 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             return
         }
         
-        print("primo url: \(url)")
         
         let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             
@@ -96,18 +95,14 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             return id1 < id2
         }
         
-        for (_, result) in sortedResults.enumerated() {
+        for result in sortedResults {
             guard let url = URL(string: result.url) else {
                 print("URL non valido per il Pokemon \(result.name)")
                 continue
             }
             
-            //id ordinati
-            //print("url al dettaglio: \(url)")
-            
             URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
                 guard let self = self else { return }
-                print("url al dettaglio2: \(url)")
                 
                 if let error = error {
                     print("Errore durante il download dei dettagli del Pokemon \(result.name): \(error)")
@@ -121,20 +116,25 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
                 
                 do {
                     let pokemonDetail = try JSONDecoder().decode(PokemonDetail.self, from: data)
+                    
+                    // Verifica che il dettaglio scaricato corrisponda al Pokemon atteso
+                    guard let currentResult = sortedResults.first(where: { $0.url == result.url }) else {
+                        print("Pokemon non trovato tra i risultati ordinati per l'URL \(result.url)")
+                        return
+                    }
+                    
+                    // Aggiungi il dettaglio del Pokemon all'array
                     DispatchQueue.main.async {
-                        // Verifica che il dettaglio scaricato corrisponda al Pokemon atteso
-                        guard let currentResult = sortedResults.first(where: { $0.url == result.url }) else {
-                            print("Pokemon non trovato tra i risultati ordinati per l'URL \(result.url)")
-                            return
-                        }
+                        self.pokemonDetails.append(pokemonDetail)
                         
-                        if let currentIndex = sortedResults.firstIndex(where: { $0.url == currentResult.url }) {
-                            self.pokemonDetails.append(pokemonDetail)
-                            self.collectionView.reloadData()
-                            print("Dettagli aggiornati per \(pokemonDetail.name)")
-                        } else {
-                            print("Pokemon non trovato tra i risultati ordinati per l'URL \(result.url)")
-                        }
+                        // Ordina l'array pokemonDetails per ID
+                        self.pokemonDetails.sort { $0.id < $1.id }
+                        
+                        // Stampa l'array pokemonDetails aggiornato dopo l'inserimento e l'ordinamento
+                        print("PokemonDetails aggiornato: \(self.pokemonDetails.map { $0.id })")
+                        
+                        // Ricarica la collectionView
+                        self.collectionView.reloadData()
                     }
                     
                 } catch {
@@ -213,11 +213,14 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
     //Metodo che gestisce il tap sulla singola cella e che permette la navigazione nella DetailView
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let pokemonDetail = pokemonDetails[indexPath.item]
-        let imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemonDetails[indexPath.item].id).png"
+        let imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemonDetail.id).png"
         
         let detailViewController = DetailViewController()
         detailViewController.configure(with: pokemonDetail)
         detailViewController.configureImage(with: imageUrl)
+        // Stampiamo l'ID del Pokémon
+            print("Pokemon ID at index \(indexPath.item): \(pokemonDetail.id)")
+            
         navigationController?.pushViewController(detailViewController, animated: true)
     }
     

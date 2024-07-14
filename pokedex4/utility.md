@@ -41,4 +41,9 @@ da cui estrarre :
                                         "url": "https://pokeapi.co/api/v2/language/9/"
                                       },
 
-
+pokedex4.PokemonDetail(
+id: 20, 
+name: "raticate", 
+sprites: pokedex4.PokemonDetail.Sprites(other: pokedex4.PokemonDetail.Sprites.Other(officialArtwork: pokedex4.PokemonDetail.Sprites.Other.OfficialArtwork(frontDefault: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/20.png"))), 
+types: [pokedex4.PokemonDetail.TypeEntry(type: pokedex4.PokemonDetail.PokemonType(name: "normal"))], 
+species: pokedex4.PokemonDetail.Species(url: "https://pokeapi.co/api/v2/pokemon-species/20/"))]
