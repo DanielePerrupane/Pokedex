@@ -17,7 +17,7 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
     private var pendingRequests = 0
     
     //max 1302 fare test con 20 specie
-    private var apiURL = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=50"
+    private var apiURL = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=151"
     
     override func viewDidLoad() {
         super.viewDidLoad()
