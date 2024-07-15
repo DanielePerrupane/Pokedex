@@ -34,6 +34,7 @@ class CustomViewCell: UICollectionViewCell {
         setupConstraints()
     }
     
+    //Constraints
     private func setupConstraints() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -53,6 +54,7 @@ class CustomViewCell: UICollectionViewCell {
         ])
     }
     
+    //Metodo per configurare la cella con immagine e nameLabel
     func configure(with imageUrlString: String, name: String) {
         guard let imageUrl = URL(string: imageUrlString) else {
             print("URL dell'immagine non valido: \(imageUrlString)")

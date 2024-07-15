@@ -84,18 +84,16 @@ class DetailViewController: UIViewController {
     }
     
     
-    
+    //Metodo per configurare la cella con i dettagli
     func configure(with pokemonDetail: PokemonDetail) {
         nameLabel.text = pokemonDetail.name.capitalized
         nameLabel.font = UIFont.boldSystemFont(ofSize: 30)
         typeLabel.text = pokemonDetail.types.map { $0.type.name }.joined(separator: ", ").capitalized
-        //flavorTextLabel.text = flavorText?.flavorText
         fetchFlavorText(for: pokemonDetail.species.url)
           
-        
-        
         }
     
+    //Metodo per configurare l'immagine della cella di dettaglio
     func configureImage(with imageUrlString: String) {
         guard let imageUrl = URL(string: imageUrlString) else {
             print("URL dell'immagine non valido: \(imageUrlString)")
@@ -121,6 +119,7 @@ class DetailViewController: UIViewController {
         }.resume()
     }
     
+    //Metodo per fetchare il flavorText e selezionare il corrispondente al campo language = "en"
     func fetchFlavorText(for speciesUrl: String) {
             guard let url = URL(string: speciesUrl) else { return }
             

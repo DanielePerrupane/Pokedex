@@ -21,8 +21,10 @@ struct PokemonDetail: Codable {
     var sprites: Sprites
     var types: [TypeEntry]
     var species: Species
-    var speciesDetail: PokemonSpeciesDetail? // Proprietà opzionale per i dettagli della specie
+    var speciesDetail: PokemonSpeciesDetail?
     
+    
+    //Ramificazione per esplorare il file JSON
     struct Sprites: Codable {
         var other: Other
         
