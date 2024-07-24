@@ -25,6 +25,7 @@ class DetailViewController: UIViewController {
             nameLabel.translatesAutoresizingMaskIntoConstraints = false
             nameLabel.textAlignment = .center
             nameLabel.numberOfLines = 0
+            
             return nameLabel
         }()
         
@@ -42,6 +43,7 @@ class DetailViewController: UIViewController {
             let typeLabel2 = UILabel()
             typeLabel2.translatesAutoresizingMaskIntoConstraints = false
             typeLabel2.textAlignment = .center
+            
             typeLabel2.layer.borderColor = UIColor.white.cgColor
             typeLabel2.layer.borderWidth = 1.0
             typeLabel2.layer.cornerRadius = 8
@@ -78,14 +80,6 @@ class DetailViewController: UIViewController {
             nameLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             nameLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            typeLabel1.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 20),
-            typeLabel1.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 145),
-            typeLabel1.trailingAnchor.constraint(equalTo: typeLabel2.leadingAnchor, constant: -10),
-            
-            typeLabel2.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 20),
-            typeLabel2.leadingAnchor.constraint(equalTo: typeLabel1.trailingAnchor, constant: 10),
-            typeLabel2.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -145),
-            
             flavorTextLabel.topAnchor.constraint(equalTo: typeLabel1.bottomAnchor, constant: 20),
             flavorTextLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             flavorTextLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
@@ -111,8 +105,29 @@ class DetailViewController: UIViewController {
         if (pokemonDetail.types.count == 2) {
             typeLabel1.text = pokemonDetail.types[0].type?.name
             typeLabel2.text = pokemonDetail.types[1].type?.name
+            
+            NSLayoutConstraint.activate([
+            
+                
+                typeLabel1.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 20),
+                typeLabel1.trailingAnchor.constraint(equalTo: view.centerXAnchor,constant: -5),
+                
+                typeLabel2.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 20),
+                typeLabel2.leadingAnchor.constraint(equalTo: view.centerXAnchor,constant: 5),
+            
+            ])
+            
         } else {
+            
             typeLabel1.text = pokemonDetail.types[0].type?.name
+            
+            NSLayoutConstraint.activate([
+            
+                typeLabel1.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 20),
+                typeLabel1.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+                
+            ])
+            
         }
         
         flavorTextLabel.text = pokemonDetail.flavorText

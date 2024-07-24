@@ -26,7 +26,7 @@ class PokemonViewController: UIViewController, UICollectionViewDataSource, UICol
         self.view.addSubview(collectionView)
         
         // Fetch dei dati dei Pokémon
-        fetchAndPopulatePokemonData(ids: Array(1...151)) { [weak self] result in
+        fetchAndPopulatePokemonData(ids: Array(1...493)) { [weak self] result in
             switch result {
             case .success(let pokemons):
                 self?.pokemonDetails = pokemons
