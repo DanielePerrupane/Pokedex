@@ -85,11 +85,11 @@ class DetailViewController: UIViewController {
     
     
     //Metodo per configurare la cella con i dettagli
-    func configure(with pokemonDetail: PokemonDetail) {
+    func configure(with pokemonDetail: Pokemon) {
         nameLabel.text = pokemonDetail.name.capitalized
         nameLabel.font = UIFont.boldSystemFont(ofSize: 30)
-        typeLabel.text = pokemonDetail.types.map { $0.type.name }.joined(separator: ", ").capitalized
-        fetchFlavorText(for: pokemonDetail.species.url)
+//        typeLabel.text = pokemonDetail.types.map { $0.type.name }.joined(separator: ", ").capitalized
+        flavorTextLabel.text = pokemonDetail.flavorText
           
         }
     
@@ -119,30 +119,7 @@ class DetailViewController: UIViewController {
         }.resume()
     }
     
-    //Metodo per fetchare il flavorText e selezionare il corrispondente al campo language = "en"
-    func fetchFlavorText(for speciesUrl: String) {
-            guard let url = URL(string: speciesUrl) else { return }
-            
-            URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-                guard let self = self, let data = data else { return }
-                
-                if let error = error {
-                    print("Error fetching flavor text: \(error)")
-                    return
-                }
-                
-                do {
-                    let speciesDetail = try JSONDecoder().decode(PokemonSpeciesDetail.self, from: data)
-                    
-                    if let flavorTextEntry = speciesDetail.flavorTextEntries.first(where: { $0.language.name == "en" }) {
-                        DispatchQueue.main.async {
-                            self.flavorTextLabel.text = flavorTextEntry.flavorText
-                        }
-                    }
-                } catch {
-                    print("Error decoding species detail: \(error)")
-                }
-            }.resume()
-        }
+    
+    
     
 }

@@ -1,88 +1,57 @@
-//
-//  Pokemon.swift
-//  pokedex4
-//
-//  Created by Daniele Perrupane on 12/07/24.
-//
-
-struct PokemonAPIResponse: Codable {
-    let results: [PokemonAPIResult]
+// Strutture dati come definito precedentemente
+struct PokemonResponse: Codable {
+    let sprites: Sprites
+    let types: [TypeSlot]
 }
 
-struct PokemonAPIResult: Codable {
-    var name: String
-    var url: String
+struct PokemonSpeciesResponse: Codable {
+    let name: String
+    let flavor_text_entries: [FlavorTextEntry]
+}
+
+struct TypeSlot: Codable {
+    let slot: Int
+    let type: Types?
+}
+
+struct Types: Codable {
+    let name: String
+    let url: String
+}
+
+struct FlavorTextEntry: Codable {
+    let flavor_text: String
+    let language: Language
+}
+
+struct Language: Codable {
+    let name: String
+}
+
+struct Sprites: Codable {
+    let other: Other
     
+    struct Other: Codable {
+        let officialArtwork: OfficialArtwork
+        
+        enum CodingKeys: String, CodingKey {
+            case officialArtwork = "official-artwork"
+        }
+        
+        struct OfficialArtwork: Codable {
+            let frontDefault: String
+            
+            enum CodingKeys: String, CodingKey {
+                case frontDefault = "front_default"
+            }
+        }
+    }
 }
 
-struct PokemonDetail: Codable {
+struct Pokemon {
     var id: Int
     var name: String
     var sprites: Sprites
-    var types: [TypeEntry]
-    var species: Species
-    var speciesDetail: PokemonSpeciesDetail?
-    
-    
-    //Ramificazione per esplorare il file JSON
-    struct Sprites: Codable {
-        var other: Other
-        
-        struct Other: Codable {
-            var officialArtwork: OfficialArtwork
-            
-            enum CodingKeys: String, CodingKey {
-                case officialArtwork = "official-artwork"
-            }
-            
-            struct OfficialArtwork: Codable {
-                var frontDefault: String
-                
-                enum CodingKeys: String, CodingKey {
-                    case frontDefault = "front_default"
-                }
-            }
-        }
-    }
-    
-    struct TypeEntry: Codable {
-        var type: PokemonType
-    }
-    
-    struct PokemonType: Codable {
-        var name: String
-    }
-    
-    struct Species: Codable {
-        var url: String
-    }
+    var types: [TypeSlot]
+    var flavorText: String
 }
-
-struct PokemonSpeciesDetail: Codable {
-    var flavorTextEntries: [FlavorTextEntry]
-    
-    enum CodingKeys: String, CodingKey {
-        case flavorTextEntries = "flavor_text_entries"
-    }
-    
-    struct FlavorTextEntry: Codable {
-        var flavorText: String
-        var language: Language
-        
-        enum CodingKeys: String, CodingKey {
-            case flavorText = "flavor_text"
-            case language
-        }
-        
-        struct Language: Codable {
-            var name: String
-        }
-        
-        init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            flavorText = try container.decode(String.self, forKey: .flavorText)
-            language = try container.decodeIfPresent(Language.self, forKey: .language) ?? Language(name: "en")
-        }
-    }
-}
-
