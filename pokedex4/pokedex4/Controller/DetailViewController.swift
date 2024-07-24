@@ -29,24 +29,25 @@ class DetailViewController: UIViewController {
             return nameLabel
         }()
         
-        private var typeLabel1: UILabel = {
-            let typeLabel1 = UILabel()
+        private var typeLabel1: PaddingLabel = {
+            let typeLabel1 = PaddingLabel()
             typeLabel1.translatesAutoresizingMaskIntoConstraints = false
             typeLabel1.textAlignment = .center
             typeLabel1.layer.borderColor = UIColor.white.cgColor
             typeLabel1.layer.borderWidth = 1.0
-            typeLabel1.layer.cornerRadius = 8
+            typeLabel1.layer.cornerRadius = 15
+            
             return typeLabel1
         }()
     
-        private var typeLabel2: UILabel = {
-            let typeLabel2 = UILabel()
+        private var typeLabel2: PaddingLabel = {
+            let typeLabel2 = PaddingLabel()
             typeLabel2.translatesAutoresizingMaskIntoConstraints = false
             typeLabel2.textAlignment = .center
             
             typeLabel2.layer.borderColor = UIColor.white.cgColor
             typeLabel2.layer.borderWidth = 1.0
-            typeLabel2.layer.cornerRadius = 8
+            typeLabel2.layer.cornerRadius = 15
             return typeLabel2
         }()
         
@@ -103,14 +104,15 @@ class DetailViewController: UIViewController {
         nameLabel.font = UIFont.boldSystemFont(ofSize: 30)
         
         if (pokemonDetail.types.count == 2) {
-            typeLabel1.text = pokemonDetail.types[0].type?.name
-            typeLabel2.text = pokemonDetail.types[1].type?.name
+            typeLabel1.text = pokemonDetail.types[0].type?.name.capitalized
+            typeLabel2.text = pokemonDetail.types[1].type?.name.capitalized
             
             NSLayoutConstraint.activate([
             
                 
                 typeLabel1.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 20),
                 typeLabel1.trailingAnchor.constraint(equalTo: view.centerXAnchor,constant: -5),
+                
                 
                 typeLabel2.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 20),
                 typeLabel2.leadingAnchor.constraint(equalTo: view.centerXAnchor,constant: 5),
@@ -119,7 +121,7 @@ class DetailViewController: UIViewController {
             
         } else {
             
-            typeLabel1.text = pokemonDetail.types[0].type?.name
+            typeLabel1.text = pokemonDetail.types[0].type?.name.capitalized
             
             NSLayoutConstraint.activate([
             
@@ -160,8 +162,24 @@ class DetailViewController: UIViewController {
             }
         }.resume()
     }
-    
-    
-    
-    
+
+    @IBDesignable class PaddingLabel: UILabel {
+        
+        @IBInspectable var topInset: CGFloat = 5.0
+        @IBInspectable var bottomInset: CGFloat = 5.0
+        @IBInspectable var leftInset: CGFloat = 9.0
+        @IBInspectable var rightInset: CGFloat = 9.0
+        
+        override func drawText(in rect: CGRect) {
+            let insets = UIEdgeInsets.init(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
+            super.drawText(in: rect.inset(by: insets))
+        }
+        
+        override var intrinsicContentSize: CGSize {
+            let size = super.intrinsicContentSize
+            return CGSize(width: size.width + leftInset + rightInset,
+                          height: size.height + topInset + bottomInset)
+        }
+    }
+
 }
