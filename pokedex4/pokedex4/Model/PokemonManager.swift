@@ -1,4 +1,10 @@
-// Strutture dati come definito precedentemente
+//
+//  PokemonManager.swift
+//  pokedex4
+//
+//  Created by Daniele Perrupane on 10/07/24.
+//
+
 struct PokemonResponse: Codable {
     let sprites: Sprites
     let types: [TypeSlot]
