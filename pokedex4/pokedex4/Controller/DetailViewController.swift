@@ -56,6 +56,7 @@ class DetailViewController: UIViewController {
             flavorTextLabel.translatesAutoresizingMaskIntoConstraints = false
             flavorTextLabel.textAlignment = .center
             flavorTextLabel.numberOfLines = 0
+            flavorTextLabel.font = .systemFont(ofSize: 15)
             return flavorTextLabel
         }()
     
@@ -78,6 +79,7 @@ class DetailViewController: UIViewController {
             imageView.heightAnchor.constraint(equalToConstant: 200),
             
             nameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20),
+            nameLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             nameLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             nameLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
